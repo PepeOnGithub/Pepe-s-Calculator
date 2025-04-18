@@ -29,6 +29,7 @@ body {
     padding: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--border);
+    position: relative;
 }
 
 .calculator-header {
@@ -96,11 +97,25 @@ body {
     filter: brightness(1.2);
 }
 
-.num { background: var(--primary); }
-.op { background: #4e5d94; }
-.sci { background: #404b76; }
-.control { background: #2c2f33; }
-.eq { background: var(--primary-hover); }
+.num {
+    background: var(--primary);
+}
+
+.op {
+    background: #4e5d94;
+}
+
+.sci {
+    background: #404b76;
+}
+
+.control {
+    background: #2c2f33;
+}
+
+.eq {
+    background: var(--primary-hover);
+}
 
 .calc-history {
     position: absolute;
@@ -110,4 +125,23 @@ body {
     max-height: 200px;
     overflow-y: auto;
     display: none;
+    z-index: 10;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Light Mode Overrides */
+body.light-mode {
+    --primary: #4b91e2;
+    --primary-hover: #3578c6;
+    --background: #f1f1f1;
+    --surface: #ffffff;
+    --text: #000000;
+    --text-secondary: #444444;
+    --border: #cccccc;
+    --glass: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .icon-button:hover {
+    background: var(--primary);
 }
