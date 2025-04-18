@@ -3,59 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pepe's Calculator</title>
+    <title>Pepe's Ultimate Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="calculator-container">
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+        </div>
+        
         <div class="calculator">
-            <div class="output">
+            <div class="output-section">
                 <div class="history" id="history"></div>
+                <div class="conversion-result" id="conversionResult"></div>
                 <input type="text" id="result" value="0" disabled>
             </div>
-            <div class="keys">
+
+            <div class="button-tabs">
+                <button class="tab active" onclick="switchMode('basic')">Basic</button>
+                <button class="tab" onclick="switchMode('scientific')">Scientific</button>
+                <button class="tab" onclick="switchMode('converter')">Converter</button>
+            </div>
+
+            <div class="keys basic-mode">
+                <button class="button operator" onclick="appendInput('%')">%</button>
+                <button class="button operator" onclick="clearResult()">C</button>
+                <button class="button operator" onclick="backspace()"><i class="fas fa-backspace"></i></button>
+                <button class="button operator" onclick="appendInput('/')">÷</button>
+                <button class="button operator" onclick="appendInput('*')">×</button>
+
+                <button class="button number" onclick="appendInput('7')">7</button>
+                <button class="button number" onclick="appendInput('8')">8</button>
+                <button class="button number" onclick="appendInput('9')">9</button>
+                <button class="button number" onclick="appendInput('4')">4</button>
+                <button class="button number" onclick="appendInput('5')">5</button>
+                <button class="button number" onclick="appendInput('6')">6</button>
+                <button class="button number" onclick="appendInput('1')">1</button>
+                <button class="button number" onclick="appendInput('2')">2</button>
+                <button class="button number" onclick="appendInput('3')">3</button>
+                <button class="button number" onclick="appendInput('0')">0</button>
+                <button class="button number" onclick="appendInput('.')">.</button>
+                <button class="button operator" onclick="appendInput('-')">-</button>
+                <button class="button operator" onclick="appendInput('+')">+</button>
+                <button class="button equals" onclick="calculate()">=</button>
+            </div>
+
+            <div class="keys scientific-mode" style="display:none;">
                 <button class="button operator" onclick="handleScientific('sin(')">sin</button>
                 <button class="button operator" onclick="handleScientific('cos(')">cos</button>
                 <button class="button operator" onclick="handleScientific('tan(')">tan</button>
                 <button class="button operator" onclick="appendInput('π')">π</button>
                 <button class="button operator" onclick="appendInput('e')">e</button>
-                
+
                 <button class="button operator" onclick="appendInput('log(')">log</button>
                 <button class="button operator" onclick="appendInput('^')">x^y</button>
                 <button class="button operator" onclick="appendInput('sqrt(')">√</button>
                 <button class="button operator" onclick="appendInput('!')">n!</button>
-                <button class="button operator" onclick="appendInput('%')">%</button>
-                
-                <button class="button number" onclick="appendInput('7')">7</button>
-                <button class="button number" onclick="appendInput('8')">8</button>
-                <button class="button number" onclick="appendInput('9')">9</button>
-                <button class="button operator" onclick="appendInput('/')">÷</button>
-                <button class="button memory" onclick="memoryRecall()">MR</button>
-                
-                <button class="button number" onclick="appendInput('4')">4</button>
-                <button class="button number" onclick="appendInput('5')">5</button>
-                <button class="button number" onclick="appendInput('6')">6</button>
-                <button class="button operator" onclick="appendInput('*')">×</button>
-                <button class="button memory" onclick="memoryClear()">MC</button>
-                
-                <button class="button number" onclick="appendInput('1')">1</button>
-                <button class="button number" onclick="appendInput('2')">2</button>
-                <button class="button number" onclick="appendInput('3')">3</button>
-                <button class="button operator" onclick="appendInput('-')">-</button>
-                <button class="button memory" onclick="memoryAdd()">M+</button>
-                
-                <button class="button number" onclick="appendInput('.')">.</button>
-                <button class="button number" onclick="appendInput('0')">0</button>
-                <button class="button equals" onclick="calculate()">=</button>
-                <button class="button operator" onclick="appendInput('+')">+</button>
-                <button class="button memory" onclick="memorySubtract()">M-</button>
-                
-                <button class="button special" onclick="clearResult()">C</button>
-                <button class="button special" onclick="backspace()"><i class="fas fa-backspace"></i></button>
-                <button class="button special" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
-                <button class="button special" onclick="handleParenthesis()">( )</button>
-                <button class="button special" onclick="toggleAngleUnit()">DEG</button>
+                <button class="button operator" onclick="handleParenthesis()">( )</button>
+
+                <button class="button operator" onclick="handleBitwise('AND')">AND</button>
+                <button class="button operator" onclick="handleBitwise('OR')">OR</button>
+                <button class="button operator" onclick="handleBitwise('XOR')">XOR</button>
+                <button class="button operator" onclick="handleBitwise('NOT')">NOT</button>
+                <button class="button operator" onclick="toggleAngleUnit()">DEG</button>
+            </div>
+
+            <div class="keys converter-mode" style="display:none;">
+                <button class="button operator" onclick="handleConversion('cm-inches')">CM→IN</button>
+                <button class="button operator" onclick="handleConversion('inches-cm')">IN→CM</button>
+                <button class="button operator" onclick="handleConversion('kg-lbs')">KG→LB</button>
+                <button class="button operator" onclick="handleConversion('lbs-kg')">LB→KG</button>
+                <button class="button operator" onclick="handleConversion('c-f')">°C→°F</button>
+                <button class="button operator" onclick="handleConversion('f-c')">°F→°C</button>
+                <button class="button operator" onclick="handleProgramming('HEX')">HEX</button>
+                <button class="button operator" onclick="handleProgramming('DEC')">DEC</button>
+                <button class="button operator" onclick="handleProgramming('BIN')">BIN</button>
+                <button class="button operator" onclick="memoryAdd()">M+</button>
+                <button class="button operator" onclick="memorySubtract()">M-</button>
+                <button class="button operator" onclick="memoryRecall()">MR</button>
+                <button class="button operator" onclick="memoryClear()">MC</button>
             </div>
         </div>
     </div>
