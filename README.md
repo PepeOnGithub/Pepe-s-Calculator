@@ -19,16 +19,6 @@ A sleek, glassy, all-in-one calculator with **dark/light mode**, **scientific fu
 - 📜 Clickable history panel
 - ⌨️ Keyboard input support
 
----
-
-## 📸 Sneak Peek
-
-> _"Designed to look ✨ smooth and feel 🔥 fast."_
-
-![Pepe's Calculator Preview](https://github.com/PepeOnGitHub/Pepe-s-Calculator/assets/your-image-preview-if-you-want.png)
-
----
-
 ## 🚀 Tech Stack
 
 - HTML, CSS (Glassmorphism + CSS Variables)
