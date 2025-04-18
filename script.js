@@ -13,26 +13,31 @@ class MathParser {
         tan: Math.tan,
         log: Math.log10,
         sqrt: Math.sqrt,
-        factorial: n => n <= 1 ? 1 : n * MathParser.functions.factorial(n - 1)
+        factorial: n => n <= 1 ? 1 : n * MathParser.functions.factorial(n - 1),
+        random: () => Math.random()
     };
 
     static constants = {
-        π: Math.PI
+        π: Math.PI,
+        e: Math.E
     };
 
-    static parse(expr, isDegree) {
+    static parse(expr, isDegree, lastResult) {
         if (isDegree) {
             expr = expr.replace(/(sin|cos|tan)\(/g, '$1_deg(');
         }
 
         expr = expr.replace(/π/g, 'MathParser.constants.π');
+        expr = expr.replace(/e/g, 'MathParser.constants.e');
+        expr = expr.replace(/Ans/g, lastResult);
+        expr = expr.replace(/Ran\(\)/g, 'MathParser.functions.random()');
 
         expr = expr.replace(/([a-z]+)_?deg?\(/g, (_, fn) => 
             `MathParser.functions.${fn}(`);
 
         expr = expr.replace(/(\d+)!/g, 'MathParser.functions.factorial($1)');
 
-        if (!/^[\d+\-*\/^().π!a-z_]*$/.test(expr)) {
+        if (!/^[\d+\-*\/^().π!a-z_A-Z]*$/.test(expr)) {
             throw new Error("Invalid characters in expression");
         }
 
@@ -47,6 +52,7 @@ class MathParser {
 let input = '';
 let isDegree = true;
 let history = [];
+let lastResult = 0;
 
 function appendInput(value) {
     input += value;
@@ -82,8 +88,9 @@ function calculate() {
     try {
         if (!input) return;
 
-        const result = MathParser.parse(input, isDegree);
+        const result = MathParser.parse(input, isDegree, lastResult);
         history.push(`${input} = ${result}`);
+        lastResult = result;
         input = result.toString();
         updateDisplay();
     } catch (e) {
@@ -95,7 +102,7 @@ function calculate() {
 
 function showHistory() {
     const historyDiv = document.querySelector('.calc-history');
-    historyDiv.innerHTML = history.map(entry =>
+    historyDiv.innerHTML = history.map(entry => 
         `<div class="history-entry">${entry}</div>`).join('');
     historyDiv.style.display = historyDiv.style.display === 'block' ? 'none' : 'block';
 }
@@ -108,7 +115,7 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 });
 
 document.addEventListener('keydown', (e) => {
-    const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','+','-','*','/','.','^','!','π'];
+    const allowedKeys = ['0','1','2','3','4','5','6','7','8','9','+','-','*','/','.','^','!','π','(',')'];
     if (allowedKeys.includes(e.key)) {
         appendInput(e.key);
     } else if (e.key === 'Enter') {
