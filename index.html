@@ -15,7 +15,7 @@
                 <button id="theme-toggle" class="icon-button">
                     <i class="fas fa-moon"></i>
                 </button>
-                <h2>CyberCalc</h2>
+                <h2>Pepe's Calculator</h2>
                 <div class="calc-history"></div>
             </div>
             
@@ -26,35 +26,44 @@
                 </div>
                 
                 <div class="keys">
+                    <!-- Scientific / Extras -->
                     <button class="button sci" onclick="handleScientific('log(')">log</button>
                     <button class="button sci" onclick="handleScientific('sin(')">sin</button>
                     <button class="button sci" onclick="handleScientific('cos(')">cos</button>
                     <button class="button sci" onclick="handleScientific('tan(')">tan</button>
+                    
                     <button class="button sci" onclick="appendInput('π')">π</button>
+                    <button class="button sci" onclick="appendInput('e')">e</button>
                     <button class="button sci" onclick="appendInput('^')">x^y</button>
                     <button class="button sci" onclick="appendInput('sqrt(')">√</button>
-                    <button class="button sci" onclick="appendInput('!')">!</button>
                     
+                    <button class="button sci" onclick="appendInput('Ran()')">Ran()</button>
+                    <button class="button sci" onclick="appendInput('Ans')">Ans</button>
+                    <button class="button sci" onclick="appendInput('(')">(</button>
+                    <button class="button sci" onclick="appendInput(')')">)</button>
+
+                    <!-- Numbers / Operators -->
                     <button class="button num" onclick="appendInput('7')">7</button>
                     <button class="button num" onclick="appendInput('8')">8</button>
                     <button class="button num" onclick="appendInput('9')">9</button>
                     <button class="button op" onclick="appendInput('/')">÷</button>
-                    
+
                     <button class="button num" onclick="appendInput('4')">4</button>
                     <button class="button num" onclick="appendInput('5')">5</button>
                     <button class="button num" onclick="appendInput('6')">6</button>
                     <button class="button op" onclick="appendInput('*')">×</button>
-                    
+
                     <button class="button num" onclick="appendInput('1')">1</button>
                     <button class="button num" onclick="appendInput('2')">2</button>
                     <button class="button num" onclick="appendInput('3')">3</button>
                     <button class="button op" onclick="appendInput('-')">-</button>
-                    
+
                     <button class="button num" onclick="appendInput('.')">.</button>
                     <button class="button num" onclick="appendInput('0')">0</button>
                     <button class="button eq" onclick="calculate()">=</button>
                     <button class="button op" onclick="appendInput('+')">+</button>
-                    
+
+                    <!-- Controls -->
                     <button class="button control" onclick="clearResult()">C</button>
                     <button class="button control" onclick="backspace()">⌫</button>
                     <button class="button control" onclick="toggleDegrees()" id="deg-rad">DEG</button>
