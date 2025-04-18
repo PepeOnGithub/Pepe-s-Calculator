@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,67 +6,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pepe's Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="calculator-container">
-        <div class="calculator">
-            <div class="calc-header">
-                <h2>Calculator</h2>
-                <div class="theme-toggle" onclick="toggleTheme()">
+        <div class="calculator-glass">
+            <div class="calculator-header">
+                <button id="theme-toggle" class="icon-button">
                     <i class="fas fa-moon"></i>
-                </div>
+                </button>
+                <h2>CyberCalc</h2>
+                <div class="calc-history"></div>
             </div>
             
-            <div class="calc-display">
-                <div class="calc-history" id="history"></div>
-                <input type="text" id="display" value="0" readonly>
-            </div>
-
-            <div class="calc-buttons">
-                <!-- Scientific Buttons -->
-                <button class="btn sci" data-op="sin(">sin</button>
-                <button class="btn sci" data-op="cos(">cos</button>
-                <button class="btn sci" data-op="tan(">tan</button>
-                <button class="btn sci" data-op="π">π</button>
-                <button class="btn sci" data-op="√(">√</button>
+            <div class="calculator">
+                <div class="output">
+                    <input type="text" id="result" value="0" disabled>
+                    <div class="expression-preview" id="expression"></div>
+                </div>
                 
-                <!-- Memory Buttons -->
-                <button class="btn mem" data-op="MC">MC</button>
-                <button class="btn mem" data-op="MR">MR</button>
-                <button class="btn mem" data-op="M+">M+</button>
-                <button class="btn mem" data-op="M-">M-</button>
-                <button class="btn mem" data-op="MS">MS</button>
-
-                <!-- Main Buttons -->
-                <button class="btn num" data-num="7">7</button>
-                <button class="btn num" data-num="8">8</button>
-                <button class="btn num" data-num="9">9</button>
-                <button class="btn op" data-op="÷">÷</button>
-                <button class="btn op" data-op="%">%</button>
-
-                <button class="btn num" data-num="4">4</button>
-                <button class="btn num" data-num="5">5</button>
-                <button class="btn num" data-num="6">6</button>
-                <button class="btn op" data-op="×">×</button>
-                <button class="btn op" data-op="x²">x²</button>
-
-                <button class="btn num" data-num="1">1</button>
-                <button class="btn num" data-num="2">2</button>
-                <button class="btn num" data-num="3">3</button>
-                <button class="btn op" data-op="-">-</button>
-                <button class="btn op" data-op="1/x">1/x</button>
-
-                <button class="btn num" data-num="0">0</button>
-                <button class="btn num" data-num=".">.</button>
-                <button class="btn eq" data-op="=">=</button>
-                <button class="btn op" data-op="+">+</button>
-                <button class="btn op" data-op="±">±</button>
-
-                <!-- Control Buttons -->
-                <button class="btn clr" data-op="C">C</button>
-                <button class="btn clr" data-op="CE">CE</button>
-                <button class="btn clr" data-op="⌫">⌫</button>
+                <div class="keys">
+                    <button class="button sci" onclick="handleScientific('log(')">log</button>
+                    <button class="button sci" onclick="handleScientific('sin(')">sin</button>
+                    <button class="button sci" onclick="handleScientific('cos(')">cos</button>
+                    <button class="button sci" onclick="handleScientific('tan(')">tan</button>
+                    <button class="button sci" onclick="appendInput('π')">π</button>
+                    <button class="button sci" onclick="appendInput('^')">x^y</button>
+                    <button class="button sci" onclick="appendInput('sqrt(')">√</button>
+                    <button class="button sci" onclick="appendInput('!')">!</button>
+                    
+                    <button class="button num" onclick="appendInput('7')">7</button>
+                    <button class="button num" onclick="appendInput('8')">8</button>
+                    <button class="button num" onclick="appendInput('9')">9</button>
+                    <button class="button op" onclick="appendInput('/')">÷</button>
+                    
+                    <button class="button num" onclick="appendInput('4')">4</button>
+                    <button class="button num" onclick="appendInput('5')">5</button>
+                    <button class="button num" onclick="appendInput('6')">6</button>
+                    <button class="button op" onclick="appendInput('*')">×</button>
+                    
+                    <button class="button num" onclick="appendInput('1')">1</button>
+                    <button class="button num" onclick="appendInput('2')">2</button>
+                    <button class="button num" onclick="appendInput('3')">3</button>
+                    <button class="button op" onclick="appendInput('-')">-</button>
+                    
+                    <button class="button num" onclick="appendInput('.')">.</button>
+                    <button class="button num" onclick="appendInput('0')">0</button>
+                    <button class="button eq" onclick="calculate()">=</button>
+                    <button class="button op" onclick="appendInput('+')">+</button>
+                    
+                    <button class="button control" onclick="clearResult()">C</button>
+                    <button class="button control" onclick="backspace()">⌫</button>
+                    <button class="button control" onclick="toggleDegrees()" id="deg-rad">DEG</button>
+                    <button class="button control" onclick="showHistory()">📜</button>
+                </div>
             </div>
         </div>
     </div>
