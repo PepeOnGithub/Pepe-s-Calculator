@@ -145,3 +145,44 @@ body.light-mode {
 body.light-mode .icon-button:hover {
     background: var(--primary);
 }
+
+@media (max-width: 768px) {
+    .calculator-container {
+        width: 90%;
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .calculator-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .output {
+        padding: 0.75rem;
+    }
+
+    #result {
+        font-size: 2rem;
+    }
+
+    .expression-preview {
+        font-size: 0.9rem;
+    }
+
+    .keys {
+        gap: 0.4rem;
+    }
+
+    .button {
+        padding: 1rem;
+        font-size: 1.1rem;
+        border-radius: 6px;
+    }
+
+    .calc-history {
+        font-size: 0.9rem;
+    }
+}
+
