@@ -1,189 +1,157 @@
-let input = '0';
-let memory = 0;
-let isDegree = true;
-let currentTheme = localStorage.getItem('theme') || 'dark';
-let currentMode = 'basic';
-let history = JSON.parse(localStorage.getItem('calcHistory')) || [];
-let conversionRates = {
-    'cm-inches': value => value / 2.54,
-    'inches-cm': value => value * 2.54,
-    'kg-lbs': value => value * 2.20462,
-    'lbs-kg': value => value / 2.20462,
-    'c-f': value => (value * 9/5) + 32,
-    'f-c': value => (value - 32) * 5/9
-};
+class Calculator {
+    constructor() {
+        this.display = document.getElementById('display');
+        this.history = document.getElementById('history');
+        this.memory = 0;
+        this.currentInput = '0';
+        this.operation = null;
+        this.prevValue = 0;
+        this.init();
+    }
 
-// Initialize theme
-document.documentElement.setAttribute('data-theme', currentTheme);
-document.querySelector('.theme-toggle i').className = 
-    currentTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    init() {
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', () => this.handleButton(button));
+        });
+        
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        this.updateDisplay();
+    }
 
-function updateHistory() {
-    const historyElement = document.getElementById('history');
-    historyElement.innerHTML = history.slice(-3).join('<br>');
-}
+    handleButton(button) {
+        const type = button.classList[1];
+        const value = button.dataset.op || button.dataset.num;
 
-function appendInput(value) {
-    if (input === '0' && !isNaN(value)) input = '';
-    input += value;
-    updateResult();
-}
+        switch(type) {
+            case 'num': this.handleNumber(value); break;
+            case 'op': this.handleOperator(value); break;
+            case 'sci': this.handleScientific(value); break;
+            case 'mem': this.handleMemory(value); break;
+            case 'clr': this.handleClear(value); break;
+            case 'eq': this.calculate(); break;
+        }
+    }
 
-function clearResult() {
-    input = '0';
-    updateResult();
-}
+    handleNumber(num) {
+        if (this.currentInput === '0') this.currentInput = '';
+        if (num === '.' && this.currentInput.includes('.')) return;
+        this.currentInput += num;
+        this.updateDisplay();
+    }
 
-function backspace() {
-    input = input.slice(0, -1);
-    if (input === '') input = '0';
-    updateResult();
-}
-
-function updateResult() {
-    document.getElementById('result').value = input;
-}
-
-function handleScientific(func) {
-    appendInput(func + '(');
-}
-
-function handleParenthesis() {
-    const open = (input.match(/\(/g) || []).length;
-    const close = (input.match(/\)/g) || []).length;
-    appendInput(open > close ? ')' : '(');
-}
-
-function toggleAngleUnit() {
-    isDegree = !isDegree;
-    document.querySelector('.button.operator:nth-last-child(1)').textContent = 
-        isDegree ? 'DEG' : 'RAD';
-}
-
-function handleConversion(conversionType) {
-    const value = parseFloat(input);
-    const result = conversionRates[conversionType](value);
-    document.getElementById('conversionResult').textContent = 
-        `${value} => ${result.toFixed(2)}`;
-    history.push(`${conversionType}: ${value} → ${result.toFixed(2)}`);
-    localStorage.setItem('calcHistory', JSON.stringify(history));
-    updateHistory();
-}
-
-function handleBitwise(operation) {
-    const value = parseInt(input, 10);
-    let secondValue, result;
-    
-    try {
-        switch(operation) {
-            case 'AND':
-                secondValue = parseInt(prompt('Enter second number:'));
-                result = value & secondValue;
+    handleOperator(op) {
+        switch(op) {
+            case '±': 
+                this.currentInput = (-parseFloat(this.currentInput)).toString();
                 break;
-            case 'OR':
-                secondValue = parseInt(prompt('Enter second number:'));
-                result = value | secondValue;
+            case '1/x':
+                this.currentInput = (1 / parseFloat(this.currentInput)).toString();
                 break;
-            case 'XOR':
-                secondValue = parseInt(prompt('Enter second number:'));
-                result = value ^ secondValue;
+            case 'x²':
+                this.currentInput = Math.pow(parseFloat(this.currentInput), 2).toString();
                 break;
-            case 'NOT':
-                result = ~value;
+            case '%':
+                this.currentInput = (parseFloat(this.currentInput) / 100).toString();
+                break;
+            default:
+                this.prevValue = parseFloat(this.currentInput);
+                this.operation = op;
+                this.currentInput = '0';
+        }
+        this.updateDisplay();
+    }
+
+    handleScientific(func) {
+        this.currentInput = `${func}${this.currentInput})`;
+        this.updateDisplay();
+    }
+
+    handleMemory(op) {
+        const value = parseFloat(this.currentInput);
+        switch(op) {
+            case 'MC': this.memory = 0; break;
+            case 'MR': this.currentInput = this.memory.toString(); break;
+            case 'M+': this.memory += value; break;
+            case 'M-': this.memory -= value; break;
+            case 'MS': this.memory = value; break;
+        }
+        this.updateDisplay();
+    }
+
+    handleClear(op) {
+        switch(op) {
+            case 'C': 
+                this.currentInput = '0';
+                this.prevValue = 0;
+                this.operation = null;
+                break;
+            case 'CE': 
+                this.currentInput = '0';
+                break;
+            case '⌫': 
+                this.currentInput = this.currentInput.slice(0, -1);
+                if (this.currentInput === '') this.currentInput = '0';
                 break;
         }
-        input = result.toString();
-        updateResult();
-    } catch {
-        alert('Invalid input for bitwise operation');
+        this.updateDisplay();
     }
-}
 
-function handleProgramming(mode) {
-    const value = parseInt(input, 10);
-    try {
-        if (mode === 'DEC') input = value.toString(10);
-        if (mode === 'HEX') input = value.toString(16).toUpperCase();
-        if (mode === 'BIN') input = value.toString(2);
-        updateResult();
-    } catch {
-        alert('Invalid conversion');
-    }
-}
-
-function memoryAdd() {
-    memory += parseFloat(input);
-}
-
-function memorySubtract() {
-    memory -= parseFloat(input);
-}
-
-function memoryClear() {
-    memory = 0;
-}
-
-function memoryRecall() {
-    input = memory.toString();
-    updateResult();
-}
-
-function evaluateExpression(expr) {
-    return Function('"use strict";return (' + expr
-        .replace(/π/g, Math.PI)
-        .replace(/e/g, Math.E)
-        .replace(/sqrt\(/g, 'Math.sqrt(')
-        .replace(/log\(/g, 'Math.log10(')
-        .replace(/sin\(/g, isDegree ? 'Math.sin(Math.PI/180*' : 'Math.sin(')
-        .replace(/cos\(/g, isDegree ? 'Math.cos(Math.PI/180*' : 'Math.cos(')
-        .replace(/tan\(/g, isDegree ? 'Math.tan(Math.PI/180*' : 'Math.tan(')
-        .replace(/\^/g, '**')
-        .replace(/!/g, function factorial(n) {
-            return n <= 1 ? 1 : n * factorial(n - 1);
-        }) + ')')();
-}
-
-function calculate() {
-    try {
-        const result = evaluateExpression(input);
-        history.push(`${input} = ${result}`);
-        if (history.length > 10) history.shift();
-        localStorage.setItem('calcHistory', JSON.stringify(history));
+    calculate() {
+        if (!this.operation) return;
         
-        input = result.toString();
-        updateResult();
-        updateHistory();
-    } catch (e) {
-        alert('Invalid expression');
-        clearResult();
+        const current = parseFloat(this.currentInput);
+        let result;
+        
+        switch(this.operation) {
+            case '+': result = this.prevValue + current; break;
+            case '-': result = this.prevValue - current; break;
+            case '×': result = this.prevValue * current; break;
+            case '÷': result = this.prevValue / current; break;
+        }
+
+        this.history.textContent = `${this.prevValue} ${this.operation} ${current} = ${result}`;
+        this.currentInput = result.toString();
+        this.operation = null;
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+        this.display.value = this.currentInput.replace(/\*/g, '×').replace(/\//g, '÷');
+    }
+
+    handleKeyboard(e) {
+        e.preventDefault();
+        const key = e.key;
+        
+        if (key >= '0' && key <= '9' || key === '.') this.handleNumber(key);
+        if (['+', '-', '*', '/'].includes(key)) this.handleOperator(
+            key === '*' ? '×' : key === '/' ? '÷' : key
+        );
+        if (key === 'Enter') this.calculate();
+        if (key === 'Backspace') this.handleClear('⌫');
+        if (key === 'Escape') this.handleClear('C');
     }
 }
 
+// Initialize Calculator
+const calculator = new Calculator();
+
+// Theme Management
 function toggleTheme() {
-    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    localStorage.setItem('theme', currentTheme);
-    document.querySelector('.theme-toggle i').className = 
-        currentTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    document.body.classList.toggle('light-theme');
+    const themeBtn = document.querySelector('.theme-toggle i');
+    themeBtn.classList.toggle('fa-moon');
+    themeBtn.classList.toggle('fa-sun');
+    
+    // Save theme preference
+    const isDark = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    localStorage.setItem('theme', isDark);
 }
 
-function switchMode(mode) {
-    currentMode = mode;
-    document.querySelectorAll('.keys').forEach(el => el.style.display = 'none');
-    document.querySelector(`.${mode}-mode`).style.display = 'grid';
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tab[onclick="switchMode('${mode}')"]`).classList.add('active');
-}
-
-// Keyboard support
-document.addEventListener('keydown', (e) => {
-    const key = e.key;
-    if (key >= '0' && key <= '9' || key === '.') appendInput(key);
-    if (['+', '-', '*', '/'].includes(key)) appendInput(key);
-    if (key === 'Enter') calculate();
-    if (key === 'Backspace') backspace();
-    if (key === 'Escape') clearResult();
-});
-
-// Initialize
-updateHistory();
+// Initialize Theme
+document.body.classList.toggle('light-theme', 
+    localStorage.getItem('theme') === 'light'
+);
+document.querySelector('.theme-toggle i').classList.toggle('fa-sun',
+    localStorage.getItem('theme') === 'light'
+);
